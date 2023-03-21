@@ -16,6 +16,7 @@ namespace RecipeWinForms
 
 
 
+
         public void ShowForm(int recipeid)
         {
             string sql = "SELECT  r.RecipeID, r.RecipeName, r.CuisineID, r.UserID, r.Calories, r.DraftDate, r.PublishDate, r.ArchiveDate, r.RecipeImageName  FROM Recipe r where r.RecipeID = " + recipeid.ToString();
