@@ -1,4 +1,5 @@
 ﻿using CPUFrameWork;
+using CPUWindowsFormFrameWork;
 using System.Data;
 using System.Diagnostics;
 
