@@ -42,7 +42,7 @@ namespace RecipeTest
         }
 
         [Test]
-        public void ChangeExistingPresidentTermstart()
+        public void ChangeExistingRecipeCalories()
         {
             int recipeid = GetExistingRecipeId();
             Assume.That(recipeid > 0, "No recipes in DB can't run tests");
@@ -62,7 +62,7 @@ namespace RecipeTest
 
 
         [Test]
-        public void DeletePresident()
+        public void DeleteRecipe()
         {
             DataTable dt = SQLUtility.GetDataTable("select r.RecipeID, r.RecipeName from Recipe r left JOIN RecipeIngredient ri on r.RecipeID = ri.RecipeID WHERE ri.RecipeIngredientID IS NULL");
             int recipeid = 0;
