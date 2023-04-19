@@ -23,7 +23,7 @@ namespace RecipeTest
             int cuisineid = SQLUtility.GetFirstColunmFirstRowValue("SELECT TOP 1 CuisineID FROM Cuisine WHERE CuisineDesc = '" + cuisine + "'");
             Assume.That(cuisineid > 0, "Can't run test no cuisines in the DB");
 
-            int userid = SQLUtility.GetFirstColunmFirstRowValue("SELECT TOP 1 UserID FROM Users WHERE UserName = '" + user + "'");
+            int userid = SQLUtility.GetFirstColunmFirstRowValue("SELECT TOP 1 RUserID FROM RUser WHERE UserName = '" + user + "'");
             Assume.That(cuisineid > 0, "Can't run test no users in the DB");
 
             rn += " " + DateTime.Now.ToString();
@@ -32,7 +32,7 @@ namespace RecipeTest
             r["RecipeName"] = rn;
             r["CuisineID"] = cuisineid;
             r["Calories"] = calories;
-            r["UserID"] = userid;
+            r["RUserID"] = userid;
             Recipe.Save(dt);
 
             int newid = SQLUtility.GetFirstColunmFirstRowValue("select * from Recipe where RecipeName = '" + rn + "'");
@@ -116,7 +116,7 @@ namespace RecipeTest
         [Test]
         public void GetListOfUsers()
         {
-            int usercount = SQLUtility.GetFirstColunmFirstRowValue("select total = count(*) from Users");
+            int usercount = SQLUtility.GetFirstColunmFirstRowValue("select total = count(*) from RUser");
             Assume.That(usercount > 0, "No Users in DB can't do test");
 
             DataTable dt = Recipe.GetUsersList();

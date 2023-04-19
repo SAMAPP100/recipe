@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 
 namespace RecipeSystem
@@ -7,25 +8,38 @@ namespace RecipeSystem
     {
         public static DataTable SearchRecipes(string recipename)
         {
-            string sql = "SELECT r.RecipeName, r.RecipeID, c.CuisineDesc, u.UserName, r.Calories, r.CurrStatus, r.RecipeImageName  FROM Recipe r  JOIN Cuisine c   ON r.CuisineID = c.CuisineID  JOIN Users u  ON r.UserID = u.UserID where r.RecipeName like '%" + recipename + "%'";
-            DataTable dt = SQLUtility.GetDataTable(sql);
+            DataTable dt = new();
+            SqlCommand cmd = SQLUtility.GetSqlCommand("RecipeGet");
+            cmd.Parameters["@RecipeName"].Value = recipename;
+            dt = SQLUtility.GetDataTable(cmd);
             return dt;
         }
 
         public static DataTable Load(int recipeid)
         {
-            string sql = "SELECT  r.RecipeID, r.RecipeName, r.CuisineID, r.UserID, r.Calories, r.DraftDate, r.PublishDate, r.ArchiveDate, r.RecipeImageName  FROM Recipe r where r.RecipeID = " + recipeid.ToString();
-            return SQLUtility.GetDataTable(sql);
+            DataTable dt = new();
+            SqlCommand cmd = SQLUtility.GetSqlCommand("RecipeGet");
+            cmd.Parameters["@RecipeID"].Value = recipeid;
+            dt = SQLUtility.GetDataTable(cmd);
+            return dt;
         }
 
         public static DataTable GetCuisineList()
         {
-            return SQLUtility.GetDataTable("SELECT  CuisineId, CuisineDesc  FROM Cuisine");
+            DataTable dt = new();
+            SqlCommand cmd = SQLUtility.GetSqlCommand("CuisineGet");
+            cmd.Parameters["@All"].Value = 1;
+            dt = SQLUtility.GetDataTable(cmd);
+            return dt;
         }
 
         public static DataTable GetUsersList()
         {
-            return SQLUtility.GetDataTable("SELECT UserID, UserName  FROM Users");
+            DataTable dt = new();
+            SqlCommand cmd = SQLUtility.GetSqlCommand("UserGet");
+            cmd.Parameters["@All"].Value = 1;
+            dt = SQLUtility.GetDataTable(cmd);
+            return dt;
         }
 
         public static void Save(DataTable dtrecipes)
@@ -42,13 +56,13 @@ namespace RecipeSystem
                     $" RecipeName = '{r["RecipeName"]}',",
                     $" CuisineID = '{r["CuisineID"]}',",
                     $" Calories = '{r["Calories"]}', ",
-                    $" UserID = '{r["UserID"]}'",
+                    $" RUserID = '{r["RUserID"]}'",
                     $"where RecipeID = {r["RecipeID"]} ");
             }
             else
             {
-                sql = "insert Recipe(RecipeName, CuisineID, Calories, UserID) ";
-                sql += $"select '{r["RecipeName"]}', {r["CuisineID"]}, '{r["Calories"]}', '{r["UserID"]}'";
+                sql = "insert Recipe(RecipeName, CuisineID, Calories, RUserID) ";
+                sql += $"select '{r["RecipeName"]}', {r["CuisineID"]}, '{r["Calories"]}', '{r["RUserID"]}'";
             }
             Debug.WriteLine(sql);
             SQLUtility.ExecuteSQL(sql);

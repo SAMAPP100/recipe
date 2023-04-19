@@ -14,13 +14,13 @@ DROP TABLE IF EXISTS Cuisine
 DROP TABLE IF EXISTS Course
 DROP TABLE IF EXISTS Measurement
 DROP TABLE IF EXISTS Ingredient
-DROP TABLE IF EXISTS Users
+DROP TABLE IF EXISTS RUser
 GO
 
 
- create table dbo.Users(
+ create table dbo.RUser(
     
-    UserID int NOT NULL identity primary key,
+    RUserID int NOT NULL identity primary key,
     FirstName varchar(25) not null CONSTRAINT c_User_First_name_cannot_be_blank CHECK(FirstName > ''),
     LastName varchar(25) not null CONSTRAINT c_User_Last_name_cannot_be_blank CHECK(LastName > ''),
     UserName varchar(25)  not null
@@ -71,7 +71,7 @@ create table dbo.Recipe(
     
     RecipeID int not null identity primary key,
     CuisineID INT NOT NULL CONSTRAINT f_Cuisine_Recipe FOREIGN KEY REFERENCES Cuisine(CuisineID),
-    UserID INT NOT NULL CONSTRAINT f_Users_Recipe FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUsers_Recipe FOREIGN KEY REFERENCES RUser(RUserID),
     RecipeName VARCHAR(35) NOT NULL 
         CONSTRAINT c_Recipe_Name_cannot_be_blank CHECK(RecipeName > '')
         CONSTRAINT u_Recipe_Name UNIQUE,
@@ -95,7 +95,7 @@ GO
 create table dbo.RecipeIngredient(
     
     RecipeIngredientID int not null identity primary key,
-    UserID INT NOT NULL CONSTRAINT f_Users_RecipeIngredient FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUser_RecipeIngredient FOREIGN KEY REFERENCES RUser(RUserID),
     RecipeID INT NOT NULL CONSTRAINT f_Recipe_RecipeIngredient FOREIGN KEY REFERENCES Recipe(RecipeID),
     IngredientID INT NOT NULL CONSTRAINT f_Ingredient_RecipeIngredient FOREIGN KEY REFERENCES Ingredient(IngredientID),
     MeasurementID INT NOT NULL CONSTRAINT f_Measurement_RecipeIngredient FOREIGN KEY REFERENCES Measurement(MeasurementID),
@@ -109,7 +109,7 @@ GO
 create table dbo.Direction(
     
     DirectionID int not null identity primary key,
-    UserID INT NOT NULL CONSTRAINT f_Users_Direction FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUser_Direction FOREIGN KEY REFERENCES RUser(RUserID),
     RecipeID INT NOT NULL CONSTRAINT f_Recipe_Direction FOREIGN KEY REFERENCES Recipe(RecipeID),
     StepDesc VARCHAR(200) NOT NULL CONSTRAINT c_Direction_step_desc_cannot_be_blank CHECK(StepDesc > ''),
     DirectionOrder INT NOT NULL CONSTRAINT c_Direction_Order_must_be_greater_than_zero CHECK(DirectionOrder > 0),
@@ -121,7 +121,7 @@ GO
 create table dbo.Meal(
     
     MealID int not null identity primary key,
-    UserID INT NOT NULL CONSTRAINT f_Users_Meal FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUser_Meal FOREIGN KEY REFERENCES RUser(RUserID),
     MealName VARCHAR(25) NOT NULL
         CONSTRAINT c_Meal_name_cannot_be_blank CHECK(MealName > '')
         CONSTRAINT u_Meal_name unique,
@@ -136,7 +136,7 @@ create table dbo.MealCourse(
     MealCourseID int not null identity primary key,
     MealID INT NOT NULL CONSTRAINT f_Meal_MealCourse FOREIGN KEY REFERENCES Meal(MealID),
     CourseID INT NOT NULL CONSTRAINT f_Course_MealCourse FOREIGN KEY REFERENCES Course(CourseID),
-    UserID INT NOT NULL CONSTRAINT f_Users_MealCourse FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUser_MealCourse FOREIGN KEY REFERENCES RUser(RUserID),
 
     Constraint u_MealCourse_Meal_Course unique(MealID, CourseID)
 )
@@ -145,7 +145,7 @@ GO
 create table dbo.MealCourseRecipe(
     
     MealCourseRecipeID int not null identity primary key,
-    UserID INT NOT NULL CONSTRAINT f_Users_MealCourseRecipe FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUser_MealCourseRecipe FOREIGN KEY REFERENCES RUser(RUserID),
     MealCourseID INT NOT NULL CONSTRAINT f_MealCourse_MealCourseRecipe FOREIGN KEY REFERENCES MealCourse(MealCourseID),
     RecipeID INT NOT NULL CONSTRAINT f_Recipe_MealCourseRecipe FOREIGN KEY REFERENCES Recipe(RecipeID),
     IsMain bit NOT NULL DEFAULT 0,
@@ -157,7 +157,7 @@ GO
 create table dbo.CookBook(
     
     CookBookID int not null identity primary key,
-    UserID INT NOT NULL CONSTRAINT f_Users_CookBook FOREIGN KEY REFERENCES Users(UserID),
+    RUserID INT NOT NULL CONSTRAINT f_RUser_CookBook FOREIGN KEY REFERENCES RUser(RUserID),
     CookBookName VARCHAR(50) NOT NULL
         constraint c_CookBook_name_cannot_be_blank CHECK(CookBookName > '')
         CONSTRAINT u_CookBook_name unique,

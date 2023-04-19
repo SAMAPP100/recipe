@@ -14,11 +14,11 @@ DELETE Cuisine
 DELETE Course
 DELETE Measurement
 DELETE Ingredient
-DELETE Users
+DELETE RUser
 GO
 
 
-INSERT Users(FirstName, LastName, UserName)
+INSERT RUser(FirstName, LastName, UserName)
 SELECT 'Ezra', 'Carson', 'ECarson'
 UNION SELECT 'Oliver', 'Oudson', 'EHudson'
 UNION SELECT 'Shmiel', 'Breuer', 'SBreuer'
@@ -102,10 +102,10 @@ WITH x AS(
     UNION SELECT 'French', 'Shmiel', 'Herby Pizza', 100, '2022-11-13', '2022-11-15', NULL
     UNION SELECT 'French', 'Shmiel', 'Herbs Pizza', 100, '2022-11-13', NULL, '2022-11-15'
 )
-INSERT Recipe(CuisineID, UserID, RecipeName, Calories, DraftDate, PublishDate, ArchiveDate)
-SELECT c.CuisineID, u.UserID, x.RecipeName, x.Calories, x.DraftDate, x.PublishDate, x.ArchiveDate
+INSERT Recipe(CuisineID, RUserID, RecipeName, Calories, DraftDate, PublishDate, ArchiveDate)
+SELECT c.CuisineID, u.RUserID, x.RecipeName, x.Calories, x.DraftDate, x.PublishDate, x.ArchiveDate
 FROM x
-JOIN Users u
+JOIN RUser u
 ON x.userFN = u.FirstName
 JOIN Cuisine c
 ON c.CuisineDesc = x.Cuisine
@@ -167,8 +167,8 @@ WITH x AS(
     UNION SELECT Recipe = 'Herby Pizza', Ingredient = 'Basil leaves', Measurement = 'unit', Amount = 7, IngredientOrder = 6
 
 )
-INSERT RecipeIngredient(UserID, RecipeID, IngredientID, MeasurementID, Amount, RecipeIngredientOrder)
-SELECT r.UserID, r.RecipeID, i.IngredientID, m.MeasurementID, x.Amount, x.IngredientOrder
+INSERT RecipeIngredient(RUserID, RecipeID, IngredientID, MeasurementID, Amount, RecipeIngredientOrder)
+SELECT r.RUserID, r.RecipeID, i.IngredientID, m.MeasurementID, x.Amount, x.IngredientOrder
 FROM x
 JOIN Recipe r
 ON x.Recipe = r.RecipeName
@@ -219,8 +219,8 @@ WITH x AS(
     UNION SELECT Recipe = 'Herby Pizza', StepDesc = 'Spread wraps with sauce and cheese. Bake for 9-12 minutes.', DirectionOrder = 2
     UNION SELECT Recipe = 'Herby Pizza', StepDesc = 'Top with Scallions, parsley, and Basil; slice pizza to serve.', DirectionOrder = 3
 )
-INSERT Direction(UserID, RecipeID, StepDesc, DirectionOrder)
-SELECT r.UserID, r.RecipeID, x.StepDesc, x.DirectionOrder
+INSERT Direction(RUserID, RecipeID, StepDesc, DirectionOrder)
+SELECT r.RUserID, r.RecipeID, x.StepDesc, x.DirectionOrder
 FROM x
 JOIN Recipe r
 ON x.Recipe = r.RecipeName
@@ -232,10 +232,10 @@ WITH x AS(
     SELECT userFN = 'Oliver', MealName = 'Breakfast bash'
     UNION SELECT userFN = 'Shmiel', MealName = 'Pizza party'
 )
-INSERT Meal(userID, MealName)
-SELECT u.UserID, x.MealName
+INSERT Meal(RUserID, MealName)
+SELECT u.RUserID, x.MealName
 FROM x
-JOIN Users u
+JOIN RUser u
 ON x.userFN = u.FirstName
 
 ;
@@ -245,8 +245,8 @@ WITH x as(
 
     UNION SELECT Meal = 'Pizza party', Course = 'Main course'
 )
-INSERT MealCourse(MealID, CourseID, UserID)
-SELECT m.MealID, c.CourseID, m.UserID
+INSERT MealCourse(MealID, CourseID, RUserID)
+SELECT m.MealID, c.CourseID, m.RUserID
 FROM x
 JOIN Course c
 ON x.Course = c.CourseDesc
@@ -266,8 +266,8 @@ WITH x AS(
     UNION SELECT Meal = 'Pizza party', Course = 'Main course', Recipe = 'Mexican Pizza', Main = 0
     UNION SELECT Meal = 'Pizza party', Course = 'Main course', Recipe = 'Cheesy Sticks', Main = 0
 )
-INSERT MealCourseRecipe(MealCourseID, RecipeID, IsMain, UserID)
-SELECT mc.MealCourseID, r.RecipeID, x.Main, m.UserID
+INSERT MealCourseRecipe(MealCourseID, RecipeID, IsMain, RUserID)
+SELECT mc.MealCourseID, r.RecipeID, x.Main, m.RUserID
 FROM x
 JOIN Meal m
 ON x.Meal = m.MealName
@@ -287,10 +287,10 @@ WITH x AS(
     union SELECT CookBookName = 'Pizza Book', price = 30, userFN = 'Shmiel'
     union SELECT CookBookName = 'Big Book', price = 50, userFN = 'Shmiel'
 )
-INSERT CookBook(CookBookName, CookBookPrice, UserID)
-SELECT x.CookBookName, x.price, u.UserID
+INSERT CookBook(CookBookName, CookBookPrice, RUserID)
+SELECT x.CookBookName, x.price, u.RUserID
 FROM x
-JOIN Users u
+JOIN RUser u
 ON x.userFN = u.FirstName
 GO
 

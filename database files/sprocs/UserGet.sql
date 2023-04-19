@@ -4,9 +4,9 @@ begin
 
 	select @LastName = nullif(@LastName, '')
 
-	select u.UserID, u.FirstName, u.LastName, u.UserName
-	from Users u
-	Where u.UserID = @UserID
+	select u.RUserID, u.FirstName, u.LastName, u.UserName
+	from RUser u
+	Where u.RUserID = @UserID
 	or @All = 1 
 	or u.LastName like '%' + @LastName + '%'
 	order by u.FirstName
