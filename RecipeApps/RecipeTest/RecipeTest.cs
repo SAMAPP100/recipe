@@ -59,6 +59,35 @@ namespace RecipeTest
             Assert.IsTrue(newcalories == calories, "Calories for recipeid (" + recipeid + ") is " + newcalories);
             TestContext.WriteLine("Calories for recipeid (" + recipeid + ") is " + newcalories);
         }
+        [Test]
+        public void ChangeExistingRecipeInvalidName()
+        {
+            int recipeid = GetExistingRecipeId();
+            Assume.That(recipeid > 0, "No recipes in DB can't run tests");
+            string rname = GetFirstColumnFirstRowValueAsString("select RecipeName from Recipe where recipeid <> " + recipeid);
+            string name = GetFirstColumnFirstRowValueAsString("select RecipeName from Recipe where recipeid = " + recipeid);
+            Assume.That(rname != null && rname != "", "Can not run test, because there are no other records in the table");
+
+            TestContext.WriteLine("Change recipe name for recipeid " + recipeid + " from " + name + " to " + rname);
+            DataTable dt = Recipe.Load(recipeid);
+            dt.Rows[0]["RecipeName"] = rname;
+            Exception ex = Assert.Throws<Exception>(() => Recipe.Save(dt));
+            TestContext.WriteLine(ex);
+        }
+
+        [Test]
+        public void ChangeExistingRecipeCaloriesBlankName()
+        {
+            int recipeid = GetExistingRecipeId();
+            Assume.That(recipeid > 0, "No recipes in DB can't run tests");
+            string name = GetFirstColumnFirstRowValueAsString("select RecipeName from Recipe where recipeid = " + recipeid);
+
+            TestContext.WriteLine("Change recipe name for recipeid " + recipeid + " from " + name + " to blank ");
+            DataTable dt = Recipe.Load(recipeid);
+            dt.Rows[0]["RecipeName"] = "";
+            Exception ex = Assert.Throws<Exception>(() => Recipe.Save(dt));
+            TestContext.WriteLine(ex);
+        }
 
 
         [Test]
@@ -81,7 +110,24 @@ namespace RecipeTest
             Assert.IsTrue(dtafterdelete.Rows.Count == 0, "Record with recipe id " + recipeid + "is still in DB");
             TestContext.WriteLine("Record with recipe id " + recipeid + " does not exist in DB");
         }
+        [Test]
+        public void DeleteRecipeWithIngredient()
+        {
+            DataTable dt = SQLUtility.GetDataTable("select r.RecipeID, r.RecipeName from Recipe r JOIN RecipeIngredient ri on r.RecipeID = ri.RecipeID");
+            int recipeid = 0;
+            string recipedesc = "";
+            if (dt.Rows.Count > 0)
+            {
+                recipeid = (int)dt.Rows[0]["RecipeID"];
+                recipedesc = (string)dt.Rows[0]["RecipeName"];
+            }
+            Assume.That(recipeid > 0, "No recipes without Ingredients in DB can't run tests");
 
+            TestContext.WriteLine("existing recipe with ingredient id = " + recipeid + " " + recipedesc);
+            TestContext.WriteLine("Ensure that app cannot delete recipe " + recipeid);
+            Exception ex = Assert.Throws<Exception>(() => Recipe.Delete(dt));
+            TestContext.WriteLine(ex.Message);
+        }
         [Test]
         public void LoadRecipe()
         {
@@ -131,6 +177,26 @@ namespace RecipeTest
         private int GetExistingRecipeId()
         {
             return SQLUtility.GetFirstColunmFirstRowValue("select top 1 RecipeID from Recipe");
+        }
+
+        public static string GetFirstColumnFirstRowValueAsString(string sql)
+        {
+
+            string str = "";
+            DataTable dt = SQLUtility.GetDataTable(sql);
+
+            if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
+            {
+                if (dt.Rows[0][0] != DBNull.Value)
+                {
+
+                    str = dt.Rows[0][0].ToString();
+                }
+
+            }
+
+            return str;
+
         }
 
     }
