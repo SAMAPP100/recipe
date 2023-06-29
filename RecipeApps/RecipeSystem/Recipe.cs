@@ -68,6 +68,7 @@ namespace RecipeSystem
             SQLUtility.ExecuteSQL(sql);
         }
 
+        //AF instructions were to delete the recipe and related ingredients and steps - integrate the DeleteSproc in order to carry this out
         public static void Delete(DataTable dtrecipes)
         {
             int id = (int)dtrecipes.Rows[0]["RecipeID"];

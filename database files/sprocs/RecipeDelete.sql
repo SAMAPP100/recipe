@@ -5,6 +5,7 @@ begin
 	
 	begin try
 		begin tran
+		--AF Don't forget to delete the actual recipe here
 			delete RecipeIngredient where RecipeID = @RecipeID
 			delete Direction where RecipeID = @RecipeID
 		commit
